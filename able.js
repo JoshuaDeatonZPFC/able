@@ -10,53 +10,17 @@ var AIL = "s0",
     THR = "s2",
     RUD = "s3",
     AUX = "s4",
-    position = [{
-            motor: "0",
-            beacon: [{
-                uuid: "",
-                rssi: "",
-            }, {
-                uuid: "",
-                rssi: "",
-            }]
-    },
-        {
-            motor: "1",
-            beacon: [{
-                uuid: "",
-                rssi: "",
-            }, {
-                uuid: "",
-                rssi: "",
-            }]
-    }, {
-            motor: "2",
-            beacon: [{
-                uuid: "",
-                rssi: "",
-            }, {
-                uuid: "",
-                rssi: "",
-            }]
-    }, {
-            motor: "3",
-            beacon: [{
-                uuid: "",
-                rssi: "",
-            }, {
-                uuid: "",
-                rssi: "",
-            }]
-    }],
     tracking = [{
         motor: "0",
         beacon: [{
             uuid: "",
+            default_rssi: "",
             avg_rssi: "",
             new_rssi: "",
             tx_power: ""
         }, {
             uuid: "",
+            default_rssi: "",
             avg_rssi: "",
             new_rssi: "",
             tx_power: ""
@@ -65,11 +29,13 @@ var AIL = "s0",
         motor: "1",
         beacon: [{
             uuid: "",
+            default_rssi: "",
             avg_rssi: "",
             new_rssi: "",
             tx_power: ""
         }, {
             uuid: "",
+            default_rssi: "",
             avg_rssi: "",
             new_rssi: "",
             tx_power: ""
@@ -78,11 +44,13 @@ var AIL = "s0",
         motor: "2",
         beacon: [{
             uuid: "",
+            default_rssi: "",
             avg_rssi: "",
             new_rssi: "",
             tx_power: ""
         }, {
             uuid: "",
+            default_rssi: "",
             avg_rssi: "",
             new_rssi: "",
             tx_power: ""
@@ -91,11 +59,13 @@ var AIL = "s0",
         motor: "3",
         beacon: [{
             uuid: "",
+            default_rssi: "",
             avg_rssi: "",
             new_rssi: "",
             tx_power: ""
         }, {
             uuid: "",
+            default_rssi: "",
             avg_rssi: "",
             new_rssi: "",
             tx_power: ""
@@ -115,14 +85,14 @@ for (i = 0; i < tracking.length; i++) {
 io.on('connection', function (socket) {
     socket.on("com", function (data) {
         for (var i = 0; i < tracking.length; i++) {
-            if (tracking.motor === data.motor) {
+            if (tracking[i].motor === data.motor) {
                 for (var l = 0; l < tracking[i].beacon.length; i++) {
                     if (tracking[i].beacon[l].uuid === data.uuid) {
                         if (!tracking[i].beacon[l].tx_power) {
                             tracking[i].beacon[l].tx_power = data.tx_power;
                         }
                         if (!tracking[i].beacon[l].avg_rssi) {
-                            !tracking[i].beacon[l].avg_rssi = data.rssi;
+                            tracking[i].beacon[l].avg_rssi = data.rssi;
                         } else {
                             var temp = tracking[i].beacon[l].avg_rssi + data.rssi;
                             tracking[i].beacon[l].new_rssi = data.rssi;
@@ -132,7 +102,7 @@ io.on('connection', function (socket) {
                 }
             }
         }
-        if (tracking[0].beacon[0].avg_rssi < position[0].beacon[0].rssi - 20) {
+        if (tracking[0].beacon[0].avg_rssi < tracking[0].beacon[0].default_rssi - 20) {
             serialport.open(function (error) {
                 if (error) {
                     console.log('failed to open: ' + error);
