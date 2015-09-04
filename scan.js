@@ -1,23 +1,12 @@
-var bleacon = require('node-bleacon');
-var client = require("socket.io-client").connect("http://localhost:5005/");
+var bleacon = require('bleacon');
 
 bleacon.on('stateChange', function (state) {
-    client.emit("console", {
-        motor: process.env.NOBLE_HCI_DEVICE_ID,
-        event_name: "State Change",
-        event: state
-    });
+    console.log(state);
 });
 
 bleacon.startScanning();
 bleacon.on('discover', function (peripheral) {
-    if (peripheral.advertisement.localName === "ABLE") {
-        client.emit("com", {
-            motor: process.env.NOBLE_HCI_DEVICE_ID,
-            uuid: peripheral.uuid,
-            tx_power: peripheral.txPowerLevel,
-            rssi: peripheral.rssi
-
-        });
+    if (peripheral.uuid === "7ae665810af04d0ab947b85635f21d91") {
+        console.log(peripheral.rssi);
     }
 });
