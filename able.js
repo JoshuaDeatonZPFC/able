@@ -1,10 +1,7 @@
-function calcDistance(rssi) {
-    var focal_point = -16,
-        distance;
-    distance = Math.pow(10, (focal_point + rssi) / (10 * 2));
-    return parseInt(distance);
-}
-
+var lateration = require("lateration");
+var Circle = lateration.Circle;
+var Vector = lateration.Vector;
+var laterate = lateration.laterate;
 var exec = require('child_process').exec;
 var sensor_1 = {
     exec: exec("sudo NOBLE_HCI_DEVICE_ID=0 nodejs scan.js"),
@@ -18,20 +15,19 @@ var sensor_2 = {
     current: "",
     rssi: []
 };
-/*
 var sensor_3 = {
     exec: exec("sudo NOBLE_HCI_DEVICE_ID=2 nodejs scan.js"),
-    default:"-67",
+    default: "-67",
     current: "",
     rssi: []
 };
 var sensor_4 = = {
     exec: exec("sudo NOBLE_HCI_DEVICE_ID=3 nodejs scan.js"),
-    default:"-67",
+    default: "-67",
     current: "",
     rssi: []
 };
-*/
+
 var serial = require('serialport').SerialPort;
 var serialport = new serial("/dev/ttyS2", {
     baudrate: 9600
@@ -41,64 +37,13 @@ var AIL = "s0",
     THR = "s2",
     RUD = "s3";
 
-console.log("App Start");
+function calcDistance(rssi) {
+    var focal_point = -16,
+        distance;
+    distance = Math.pow(10, (focal_point + rssi) / (10 * 2));
+    return parseInt(distance);
+}
 
-sensor_1.exec.stdout.on('data', function (data) {
-    if (sensor_1.rssi.length < 10) {
-        sensor_1.rssi.push(Math.abs(data));
-    } else {
-        var minimum = Math.min.apply(Math, sensor_1.rssi);
-        sensor_1.rssi.splice(sensor_1.rssi.indexOf(minimum), 1);
-        var newLocation = Math.min.apply(Math, sensor_1.rssi);
-        sensor_1.current = calcDistance(newLocation);
-        console.log("Sensor 1 Location: " + sensor_1.current + " cm");
-        sensor_1.rssi = [];
-    }
-});
-sensor_2.exec.stdout.on('data', function (data) {
-    if (sensor_2.rssi.length < 10) {
-        sensor_2.rssi.push(Math.abs(data));
-    } else {
-        var minimum = Math.min.apply(Math, sensor_2.rssi);
-        sensor_2.rssi.splice(sensor_2.rssi.indexOf(minimum), 1);
-        var newLocation = Math.min.apply(Math, sensor_2.rssi);
-        sensor_2.current = calcDistance(newLocation);
-        console.log("Sensor 2 Location: " + sensor_2.current + " cm");
-        sensor_2.rssi = [];
-    }
-});
-/*
-sensor_3.exec.stdout.on('data',function(data){
-    if(sensor_3.rssi.length < 10)
-    {
-        sensor_3.rssi.push(Math.abs(data));
-    }
-    else
-    {
-       var minimum = Math.min.apply(Math, sensor_3.rssi);
-        sensor_3.rssi.splice(sensor_3.rssi.indexOf(minimum), 1);
-        var newLocation = Math.min.apply(Math, sensor_3.rssi);
-        sensor_3.current = calcDistance(newLocation);
-        console.log("Sensor 3 Location: "+sensor_3.current+" cm");
-        sensor_3.rssi = [];
-    }
-});
-sensor_4.exec.stdout.on('data',function(data){
-    if(sensor_4.rssi.length < 10)
-    {
-        sensor_4.rssi.push(Math.abs(data));
-    }
-    else
-    {
-       var minimum = Math.min.apply(Math, sensor_4.rssi);
-        sensor_4.rssi.splice(sensor_4.rssi.indexOf(minimum), 1);
-        var newLocation = Math.min.apply(Math, sensor_4.rssi);
-        sensor_4.current = calcDistance(newLocation);
-        console.log("Sensor 4 Location: "+sensor_4.current+" cm");
-        sensor_4.rssi = [];
-    }
-});
-*/
 function flight_correction(pos) {
     if (pos.x < 13 && pos.y < 13) {
         serialport.open(function (error) {
@@ -294,6 +239,59 @@ function flight_correction(pos) {
         });
     }
 }
+
+console.log("App Start");
+
+sensor_1.exec.stdout.on('data', function (data) {
+    if (sensor_1.rssi.length < 10) {
+        sensor_1.rssi.push(Math.abs(data));
+    } else {
+        var minimum = Math.min.apply(Math, sensor_1.rssi);
+        sensor_1.rssi.splice(sensor_1.rssi.indexOf(minimum), 1);
+        var newLocation = Math.min.apply(Math, sensor_1.rssi);
+        sensor_1.current = calcDistance(newLocation);
+        console.log("Sensor 1 Location: " + sensor_1.current + " cm");
+        sensor_1.rssi = [];
+    }
+});
+sensor_2.exec.stdout.on('data', function (data) {
+    if (sensor_2.rssi.length < 10) {
+        sensor_2.rssi.push(Math.abs(data));
+    } else {
+        var minimum = Math.min.apply(Math, sensor_2.rssi);
+        sensor_2.rssi.splice(sensor_2.rssi.indexOf(minimum), 1);
+        var newLocation = Math.min.apply(Math, sensor_2.rssi);
+        sensor_2.current = calcDistance(newLocation);
+        console.log("Sensor 2 Location: " + sensor_2.current + " cm");
+        sensor_2.rssi = [];
+    }
+});
+sensor_3.exec.stdout.on('data', function (data) {
+    if (sensor_3.rssi.length < 10) {
+        sensor_3.rssi.push(Math.abs(data));
+    } else {
+        var minimum = Math.min.apply(Math, sensor_3.rssi);
+        sensor_3.rssi.splice(sensor_3.rssi.indexOf(minimum), 1);
+        var newLocation = Math.min.apply(Math, sensor_3.rssi);
+        sensor_3.current = calcDistance(newLocation);
+        console.log("Sensor 3 Location: " + sensor_3.current + " cm");
+        sensor_3.rssi = [];
+    }
+});
+sensor_4.exec.stdout.on('data', function (data) {
+    if (sensor_4.rssi.length < 10) {
+        sensor_4.rssi.push(Math.abs(data));
+    } else {
+        var minimum = Math.min.apply(Math, sensor_4.rssi);
+        sensor_4.rssi.splice(sensor_4.rssi.indexOf(minimum), 1);
+        var newLocation = Math.min.apply(Math, sensor_4.rssi);
+        sensor_4.current = calcDistance(newLocation);
+        console.log("Sensor 4 Location: " + sensor_4.current + " cm");
+        sensor_4.rssi = [];
+    }
+});
+
+
 
 setInterval(function () {
     var beacons = [
