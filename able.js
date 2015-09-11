@@ -38,33 +38,33 @@ function calcDistance(rssi) {
 
 function triangulation(distance_from_beacon_to_a, distance_from_beacon_to_b, distance_from_beacon_to_c, distance_between) {
     function triangle(a, b, c) {
-        temp = (Math.acos((Math.pow(a, 2) + Math.pow(c, 2) - Math.pow(b, 2)) / (2 * a * c))) * (180 / Math.PI);
+        temp = Math.round((Math.acos((Math.pow(a, 2) + Math.pow(c, 2) - Math.pow(b, 2)) / (2 * a * c))) * (180 / Math.PI));
 
         if (temp > 90) {
             return {
                 direction: "left",
-                xy: (Math.cos(180 - temp) * a) + 15,
-                z: Math.tan(180 - temp) * a
+                xy: Math.round((Math.cos(180 - temp) * a) + 15),
+                z: Math.round(Math.tan(180 - temp) * a)
             };
         } else if (temp <= 90 && temp >= 45) {
             return {
                 direction: "middle",
-                xy: Math.cos(temp) * a,
-                z: Math.tan(temp) * a
+                xy: Math.round(Math.cos(temp) * a),
+                z: Math.round(Math.tan(temp) * a)
             };
         } else if (temp < 45) {
-            return = {
+            return {
                 direction: "right",
-                xy: Math.cos(temp) * a,
-                z: Math.tan(temp) * a
-            };;
+                xy: Math.round(Math.cos(temp) * a),
+                z: Math.round(Math.tan(temp) * a)
+            };
         }
     }
 
     var front = triangle(distance_from_beacon_to_a, distance_from_beacon_to_b, distance_between);
     var left = triangle(distance_from_beacon_to_a, distance_from_beacon_to_c, distance_between);
 
-    var avg_z = (front.z * left.z) / 2
+    var avg_z = Math.round((front.z * left.z) / 2);
 
     if (avg_z < default_position.z) {
         serialport.open(function (error) {
