@@ -19,6 +19,11 @@ var sensor_1 = {
         current: "",
         rssi: []
     };
+var default_position = {
+    x: 15,
+    y: 1500,
+    z: 2500
+};
 var AIL = "s0",
     ELE = "s1",
     THR = "s2",
@@ -36,19 +41,32 @@ function triangulation(distance_from_beacon_to_a, distance_from_beacon_to_b, dis
         temp = (Math.acos((Math.pow(a, 2) + Math.pow(c, 2) - Math.pow(b, 2)) / (2 * a * c))) * (180 / Math.PI);
 
         if (temp > 90) {
-            return "left";
+            return {
+                direction: "left",
+                xy: (Math.cos(180 - temp) * a) + 15,
+                z: Math.tan(180 - temp) * a
+            };
         } else if (temp <= 90 && temp >= 45) {
-            return "middle";
+            return {
+                direction: "middle",
+                xy: Math.cos(temp) * a,
+                z: Math.tan(temp) * a
+            };
         } else if (temp < 45) {
-            return = "right";
+            return = {
+                direction: "right",
+                xy: Math.cos(temp) * a,
+                z: Math.tan(temp) * a
+            };;
         }
     }
 
     var front = triangle(distance_from_beacon_to_a, distance_from_beacon_to_b, distance_between);
     var left = triangle(distance_from_beacon_to_a, distance_from_beacon_to_c, distance_between);
 
-    if (front === "left" && left === "right") {
-        return "Quadrant 1";
+    var avg_z = (front.z * left.z) / 2
+
+    if (avg_z < default_position.z) {
         serialport.open(function (error) {
             if (error) {
                 console.log('failed to open: ' + error);
@@ -69,25 +87,127 @@ function triangulation(distance_from_beacon_to_a, distance_from_beacon_to_b, dis
                         }
                     });
                 }, 5000);
-
             }
         });
-    } else if (front === "left" && left === "middle") {
-        return "Quadrant 4";
-    } else if (front === "left" && left === "left") {
-        return "Quadrant 7";
-    } else if (front === "middle" && left === "right") {
-        return "Quadrant 2";
-    } else if (front === "middle" && left === "middle") {
-        return "Quadrant 5";
-    } else if (front === "middle" && left === "left") {
-        return "Quadrant 8";
-    } else if (front === "right" && left === "right") {
-        return "Quadrant 3";
-    } else if (front === "right" && left === "middle") {
-        return "Quadrant 6";
-    } else if (front === "right" && left === "left") {
-        return "Quadrant 9";
+    } else if (avg_z > default_position.z) {
+        serialport.open(function (error) {
+            if (error) {
+                console.log('failed to open: ' + error);
+            } else {
+                serialport.write(ELE + " 1000", function (err, results) {
+                    if (err) {
+                        console.log(err);
+                    } else if (results) {
+                        console.log(results);
+                    }
+                });
+                setTimeout(function () {
+                    serialport.write(ELE + " 0", function (err, results) {
+                        if (err) {
+                            console.log(err);
+                        } else if (results) {
+                            console.log(results);
+                        }
+                    });
+                }, 5000);
+            }
+        });
+    }
+
+    if (front.xy < default_position.x) {
+        serialport.open(function (error) {
+            if (error) {
+                console.log('failed to open: ' + error);
+            } else {
+                serialport.write(RUD + " 1000", function (err, results) {
+                    if (err) {
+                        console.log(err);
+                    } else if (results) {
+                        console.log(results);
+                    }
+                });
+                setTimeout(function () {
+                    serialport.write(RUD + " 0", function (err, results) {
+                        if (err) {
+                            console.log(err);
+                        } else if (results) {
+                            console.log(results);
+                        }
+                    });
+                }, 5000);
+            }
+        });
+    } else if (front.xy > default_position.x) {
+        serialport.open(function (error) {
+            if (error) {
+                console.log('failed to open: ' + error);
+            } else {
+                serialport.write(RUD + " 1000", function (err, results) {
+                    if (err) {
+                        console.log(err);
+                    } else if (results) {
+                        console.log(results);
+                    }
+                });
+                setTimeout(function () {
+                    serialport.write(RUD + " 0", function (err, results) {
+                        if (err) {
+                            console.log(err);
+                        } else if (results) {
+                            console.log(results);
+                        }
+                    });
+                }, 5000);
+            }
+        });
+    }
+
+    if (left.xy < default_position.y) {
+        serialport.open(function (error) {
+            if (error) {
+                console.log('failed to open: ' + error);
+            } else {
+                serialport.write(THR + " 1000", function (err, results) {
+                    if (err) {
+                        console.log(err);
+                    } else if (results) {
+                        console.log(results);
+                    }
+                });
+                setTimeout(function () {
+                    serialport.write(THR + " 0", function (err, results) {
+                        if (err) {
+                            console.log(err);
+                        } else if (results) {
+                            console.log(results);
+                        }
+                    });
+                }, 5000);
+            }
+        });
+    } else if (left.xy > default_position.y) {
+        serialport.open(function (error) {
+            if (error) {
+                console.log('failed to open: ' + error);
+            } else {
+                serialport.write(THR + " 1000", function (err, results) {
+                    if (err) {
+                        console.log(err);
+                    } else if (results) {
+                        console.log(results);
+                    }
+                });
+                setTimeout(function () {
+                    serialport.write(THR + " 0", function (err, results) {
+                        if (err) {
+                            console.log(err);
+                        } else if (results) {
+                            console.log(results);
+                        }
+                    });
+                }, 5000);
+            }
+        });
     }
 }
 
