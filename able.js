@@ -1,37 +1,24 @@
-var lateration = require("lateration");
-var Circle = lateration.Circle;
-var Vector = lateration.Vector;
-var laterate = lateration.laterate;
 var exec = require('child_process').exec;
-var sensor_1 = {
-    exec: exec("sudo NOBLE_HCI_DEVICE_ID=0 nodejs scan.js"),
-    default: "-67",
-    current: "",
-    rssi: []
-};
-var sensor_2 = {
-    exec: exec("sudo NOBLE_HCI_DEVICE_ID=1 nodejs scan.js"),
-    default: "-67",
-    current: "",
-    rssi: []
-};
-var sensor_3 = {
-    exec: exec("sudo NOBLE_HCI_DEVICE_ID=2 nodejs scan.js"),
-    default: "-67",
-    current: "",
-    rssi: []
-};
-var sensor_4 = = {
-    exec: exec("sudo NOBLE_HCI_DEVICE_ID=3 nodejs scan.js"),
-    default: "-67",
-    current: "",
-    rssi: []
-};
-
 var serial = require('serialport').SerialPort;
 var serialport = new serial("/dev/ttyS2", {
     baudrate: 9600
 });
+
+var sensor_1 = {
+        exec: exec("sudo NOBLE_HCI_DEVICE_ID=0 nodejs scan.js"),
+        current: "",
+        rssi: []
+    },
+    sensor_2 = {
+        exec: exec("sudo NOBLE_HCI_DEVICE_ID=1 nodejs scan.js"),
+        current: "",
+        rssi: []
+    },
+    sensor_3 = {
+        exec: exec("sudo NOBLE_HCI_DEVICE_ID=2 nodejs scan.js"),
+        current: "",
+        rssi: []
+    };
 var AIL = "s0",
     ELE = "s1",
     THR = "s2",
@@ -44,8 +31,24 @@ function calcDistance(rssi) {
     return parseInt(distance);
 }
 
-function flight_correction(pos) {
-    if (pos.x < 13 && pos.y < 13) {
+function triangulation(distance_from_beacon_to_a, distance_from_beacon_to_b, distance_from_beacon_to_c, distance_between) {
+    function triangle(a, b, c) {
+        temp = (Math.acos((Math.pow(a, 2) + Math.pow(c, 2) - Math.pow(b, 2)) / (2 * a * c))) * (180 / Math.PI);
+
+        if (temp > 90) {
+            return "left";
+        } else if (temp <= 90 && temp >= 45) {
+            return "middle";
+        } else if (temp < 45) {
+            return = "right";
+        }
+    }
+
+    var front = triangle(distance_from_beacon_to_a, distance_from_beacon_to_b, distance_between);
+    var left = triangle(distance_from_beacon_to_a, distance_from_beacon_to_c, distance_between);
+
+    if (front === "left" && left === "right") {
+        return "Quadrant 1";
         serialport.open(function (error) {
             if (error) {
                 console.log('failed to open: ' + error);
@@ -69,174 +72,22 @@ function flight_correction(pos) {
 
             }
         });
-    } else if (pos.x < 13 && pos.y < 13) {
-        serialport.open(function (error) {
-            if (error) {
-                console.log('failed to open: ' + error);
-            } else {
-                serialport.write(ELE + " 1000", function (err, results) {
-                    if (err) {
-                        console.log(err);
-                    } else if (results) {
-                        console.log(results);
-                    }
-                });
-                setTimeout(function () {
-                    serialport.write(ELE + " 0", function (err, results) {
-                        if (err) {
-                            console.log(err);
-                        } else if (results) {
-                            console.log(results);
-                        }
-                    });
-                }, 5000);
-
-            }
-        });
-    } else if (pos.x < 13 && pos.y < 13) {
-        serialport.open(function (error) {
-            if (error) {
-                console.log('failed to open: ' + error);
-            } else {
-                serialport.write(ELE + " 1000", function (err, results) {
-                    if (err) {
-                        console.log(err);
-                    } else if (results) {
-                        console.log(results);
-                    }
-                });
-                setTimeout(function () {
-                    serialport.write(ELE + " 0", function (err, results) {
-                        if (err) {
-                            console.log(err);
-                        } else if (results) {
-                            console.log(results);
-                        }
-                    });
-                }, 5000);
-
-            }
-        });
-    } else if (pos.x < 13 && pos.y < 13) {
-        serialport.open(function (error) {
-            if (error) {
-                console.log('failed to open: ' + error);
-            } else {
-                serialport.write(ELE + " 1000", function (err, results) {
-                    if (err) {
-                        console.log(err);
-                    } else if (results) {
-                        console.log(results);
-                    }
-                });
-                setTimeout(function () {
-                    serialport.write(ELE + " 0", function (err, results) {
-                        if (err) {
-                            console.log(err);
-                        } else if (results) {
-                            console.log(results);
-                        }
-                    });
-                }, 5000);
-
-            }
-        });
-    } else if (pos.x < 13 && pos.y < 13) {
-        serialport.open(function (error) {
-            if (error) {
-                console.log('failed to open: ' + error);
-            } else {
-                serialport.write(ELE + " 1000", function (err, results) {
-                    if (err) {
-                        console.log(err);
-                    } else if (results) {
-                        console.log(results);
-                    }
-                });
-                setTimeout(function () {
-                    serialport.write(ELE + " 0", function (err, results) {
-                        if (err) {
-                            console.log(err);
-                        } else if (results) {
-                            console.log(results);
-                        }
-                    });
-                }, 5000);
-
-            }
-        });
-    } else if (pos.x < 13 && pos.y < 13) {
-        serialport.open(function (error) {
-            if (error) {
-                console.log('failed to open: ' + error);
-            } else {
-                serialport.write(ELE + " 1000", function (err, results) {
-                    if (err) {
-                        console.log(err);
-                    } else if (results) {
-                        console.log(results);
-                    }
-                });
-                setTimeout(function () {
-                    serialport.write(ELE + " 0", function (err, results) {
-                        if (err) {
-                            console.log(err);
-                        } else if (results) {
-                            console.log(results);
-                        }
-                    });
-                }, 5000);
-
-            }
-        });
-    } else if (pos.x < 13 && pos.y < 13) {
-        serialport.open(function (error) {
-            if (error) {
-                console.log('failed to open: ' + error);
-            } else {
-                serialport.write(ELE + " 1000", function (err, results) {
-                    if (err) {
-                        console.log(err);
-                    } else if (results) {
-                        console.log(results);
-                    }
-                });
-                setTimeout(function () {
-                    serialport.write(ELE + " 0", function (err, results) {
-                        if (err) {
-                            console.log(err);
-                        } else if (results) {
-                            console.log(results);
-                        }
-                    });
-                }, 5000);
-
-            }
-        });
-    } else if (pos.x < 13 && pos.y < 13) {
-        serialport.open(function (error) {
-            if (error) {
-                console.log('failed to open: ' + error);
-            } else {
-                serialport.write(ELE + " 1000", function (err, results) {
-                    if (err) {
-                        console.log(err);
-                    } else if (results) {
-                        console.log(results);
-                    }
-                });
-                setTimeout(function () {
-                    serialport.write(ELE + " 0", function (err, results) {
-                        if (err) {
-                            console.log(err);
-                        } else if (results) {
-                            console.log(results);
-                        }
-                    });
-                }, 5000);
-
-            }
-        });
+    } else if (front === "left" && left === "middle") {
+        return "Quadrant 4";
+    } else if (front === "left" && left === "left") {
+        return "Quadrant 7";
+    } else if (front === "middle" && left === "right") {
+        return "Quadrant 2";
+    } else if (front === "middle" && left === "middle") {
+        return "Quadrant 5";
+    } else if (front === "middle" && left === "left") {
+        return "Quadrant 8";
+    } else if (front === "right" && left === "right") {
+        return "Quadrant 3";
+    } else if (front === "right" && left === "middle") {
+        return "Quadrant 6";
+    } else if (front === "right" && left === "left") {
+        return "Quadrant 9";
     }
 }
 
@@ -278,30 +129,12 @@ sensor_3.exec.stdout.on('data', function (data) {
         sensor_3.rssi = [];
     }
 });
-sensor_4.exec.stdout.on('data', function (data) {
-    if (sensor_4.rssi.length < 10) {
-        sensor_4.rssi.push(Math.abs(data));
-    } else {
-        var minimum = Math.min.apply(Math, sensor_4.rssi);
-        sensor_4.rssi.splice(sensor_4.rssi.indexOf(minimum), 1);
-        var newLocation = Math.min.apply(Math, sensor_4.rssi);
-        sensor_4.current = calcDistance(newLocation);
-        console.log("Sensor 4 Location: " + sensor_4.current + " cm");
-        sensor_4.rssi = [];
-    }
-});
-
-
 
 setInterval(function () {
-    var beacons = [
-      new Circle(new Vector(sensor_1.vector_x, sensor_1.vector_y), sensor_1.current),
-      new Circle(new Vector(sensor_2.vector_x, sensor_2.vector_y), sensor_2.current),
-      new Circle(new Vector(sensor_3.vector_x, sensor_3.vector_y), sensor_3.current),
-      new Circle(new Vector(sensor_4.vector_x, sensor_4.vector_y), sensor_4.current)
-    ];
-
-    // Laterating
-    var position = laterate(beacons);
-    flight_correction(position);
-}, 5000);
+    if (sensor_1.current && sensor_2.current && sensor_3.current) {
+        triangulation(sensor_1.current, sensor_2.current, sensor_3.current, 30);
+        sensor_1.current = "";
+        sensor_2.current = "";
+        sensor_3.current = "";
+    }
+}, 1000);
