@@ -1,12 +1,6 @@
-var bleacon = require('bleacon');
+var exec = require('child_process').exec;
+var scan = exec("sudo python scan.py");
 
-bleacon.on('stateChange', function (state) {
-    console.log(state);
-});
-
-bleacon.startScanning();
-bleacon.on('discover', function (peripheral) {
-    if (peripheral.uuid === "7ae665810af04d0ab947b85635f21d91") {
-        console.log(peripheral.rssi);
-    }
+scan.stdout.on('data', function (data) {
+	console.log(data);
 });
