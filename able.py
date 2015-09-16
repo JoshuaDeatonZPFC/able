@@ -14,7 +14,7 @@ def calcDistance(rssi):
     return float("{0:.2f}".format(distance));
 
 def triangle(a,b,c):
-    temp = (math.acos((math.pow(a, 2) + math.pow(c, 2) - math.pow(b, 2)) / (2 * a * c))) * (180 / math.pi));
+    temp = (math.acos((math.pow(a, 2) + math.pow(c, 2) - math.pow(b, 2)) / (2 * a * c))) * (180 / math.pi)
     if temp > 90:
         return ["left",(math.cos(180 - temp) * a) + 15,math.tan(180 - temp) * a]
     elif temp <= 90 and temp >= 45:
