@@ -104,7 +104,7 @@ def parse_events(sock, loop_count=100):
     sock.setsockopt( bluez.SOL_HCI, bluez.HCI_FILTER, flt )
     done = False
     results = []
-    myFullList = []
+    Adstring = ''
     for i in range(0, loop_count):
         pkt = sock.recv(255)
         ptype, event, plen = struct.unpack("BBB", pkt[:3])
@@ -125,35 +125,12 @@ def parse_events(sock, loop_count=100):
                 num_reports = struct.unpack("B", pkt[0])[0]
                 report_pkt_offset = 0
                 for i in range(0, num_reports):
-
-                    if (DEBUG == True):
-                        print "-------------"
-                        print "\tUUID: ", printpacket(pkt[report_pkt_offset -22: report_pkt_offset - 6])
-                        print "\tMAJOR: ", returnnumberpacket(pkt[report_pkt_offset -6: report_pkt_offset - 4])
-                        print "\tMINOR: ", returnnumberpacket(pkt[report_pkt_offset -4: report_pkt_offset - 2])
-                        print "\tMAC address: ", packed_bdaddr_to_string(pkt[report_pkt_offset + 3:report_pkt_offset + 9])
-                        # commented out - don't know what this byte is.  It's NOT TXPower
-                        txpower, = struct.unpack("b", pkt[report_pkt_offset -2])
-                        print "\tTxPower:", txpower
-
-                        rssi, = struct.unpack("b", pkt[report_pkt_offset -1])
-                        print "\tRSSI:", rssi
-                    # build the return string
                     if returnstringpacket(pkt[report_pkt_offset -22: report_pkt_offset - 6]) == "7ae665810af04d0ab947b85635f21d91":
-                        Adstring = packed_bdaddr_to_string(pkt[report_pkt_offset + 3:report_pkt_offset + 9])
-                        Adstring += ","
-                        Adstring += returnstringpacket(pkt[report_pkt_offset -22: report_pkt_offset - 6])
-                        Adstring += ","
-                        Adstring += "%i" % returnnumberpacket(pkt[report_pkt_offset -6: report_pkt_offset - 4])
-                        Adstring += ","
-                        Adstring += "%i" % returnnumberpacket(pkt[report_pkt_offset -4: report_pkt_offset - 2])
-                        Adstring += ","
-                        Adstring += "%i" % struct.unpack("b", pkt[report_pkt_offset -2])
-                        Adstring += ","
-                        Adstring += "%i" % struct.unpack("b", pkt[report_pkt_offset -1])
-                        myFullList.append(Adstring)
+                        Adstring = struct.unpack("b", pkt[report_pkt_offset -1])[0]
+                        if Adstring != '':
+                            Adstring = float(Adstring)
                         done = True
     sock.setsockopt( bluez.SOL_HCI, bluez.HCI_FILTER, old_filter )
-    return myFullList
+    return Adstring
 
 
