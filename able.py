@@ -9,9 +9,9 @@ import bluetooth._bluetooth as bluez
 s = serial.Serial("/dev/ttyS2",9600)
 
 def calcDistance(rssi):
-        focal_point = -16
-        distance = math.pow(10, (focal_point - rssi) / (10 * 2))
-        return float("{0:.2f}".format(distance))
+    focal_point = -16
+    distance = math.pow(10, (focal_point - rssi) / (10 * 2))
+    return float("{0:.2f}".format(distance))
 
 def triangle(a,b):
     c = math.sqrt(math.pow(a,2)+math.pow(b,2));
@@ -82,36 +82,36 @@ while True:
 
     output_1 = blescan.parse_events(sensor_1, 1)
     if len(rssi_1) < 5:
-	distance_1 = 0
-	if output_1 != '':
-        	rssi_1.append(output_1)
+        distance_1 = 0
+        if output_1 != '':
+                rssi_1.append(output_1)
     else:
-	rssi_1.remove(min(rssi_1))
-	rssi_1.remove(min(rssi_1))
+        rssi_1.remove(min(rssi_1))
+        rssi_1.remove(min(rssi_1))
         distance_1 = calcDistance(min(rssi_1))
 
     output_2 = blescan.parse_events(sensor_2, 1)
     if len(rssi_2) < 5:
-	distance_2 = 0
-	if output_2 != '':
-        	rssi_2.append(output_2)
+        distance_2 = 0
+        if output_2 != '':
+            rssi_2.append(output_2)
     else:
-	rssi_2.remove(min(rssi_2))
-	rssi_2.remove(min(rssi_2))
+        rssi_2.remove(min(rssi_2))
+        rssi_2.remove(min(rssi_2))
         distance_2 = calcDistance(min(rssi_2))
 
     output_3 = blescan.parse_events(sensor_3, 1)
     if len(rssi_3) < 5:
-	distance_3 = 0
-	if output_3 != '':
-        	rssi_3.append(output_3)
+        distance_3 = 0
+        if output_3 != '':
+            rssi_3.append(output_3)
     else:
-	rssi_3.remove(min(rssi_3))
-	rssi_3.remove(min(rssi_3))
+        rssi_3.remove(min(rssi_3))
+        rssi_3.remove(min(rssi_3))
         distance_3 = calcDistance(min(rssi_3))
 
     if distance_1 != 0 and distance_2 != 0 and distance_3 != 0:
-    	triangulation(distance_1,distance_2,distance_3)
-	rssi_1 = []
-	rssi_2 = []
-	rssi_3 = []
+        triangulation(distance_1,distance_2,distance_3)
+        rssi_1 = []
+        rssi_2 = []
+        rssi_3 = []
